@@ -27,3 +27,24 @@ csv_export_url = sheet_url.replace('/edit#gid=', '/export?format=csv&gid=')
 
 df_googlesheet = pd.read_csv(csv_export_url)
 df_googlesheet.head()
+
+def google_sheets():
+    sheet_url = 'https://docs.google.com/spreadsheets/d/1zozkbdAJBIovrqqaE7k0rC2dlKcaI9sA7BsSnJ7eAtg/edit#gid=1023018493'
+    csv_export_url = sheet_url.replace('/edit#gid=', '/export?format=csv&gid=')
+    df_googlesheet = pd.read_csv(csv_export_url)
+    return df_googlesheet
+
+def excel_file():
+    excel_sheet="Jennifer Eyring - jemison_spreadsheet_exercises.xlsx"
+    df_excel = pd.read_excel(excel_sheet)
+    return df_excel
+
+
+def get_titanic_data():
+    new_titanic_data=
+    if os.path.isfile('titanic_df.csv'):
+        df = pd.read_csv('titanic_df.csv', index_col=0)
+    else:
+        df = new_titanic_data()
+
+        df.to_csv('titanic_df.csv')
