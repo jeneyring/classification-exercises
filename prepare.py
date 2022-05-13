@@ -1,7 +1,24 @@
 import pandas as pd
+import numpy as np
+
+from sklearn.model_selection import train_test_split
+from sklearn.impute import SimpleImputer
 
 
-##Iris prepped dataset
+##Iris prepped dataset  
+def split_iris_data(df):
+    '''
+    Take in a df and return train, validate and test df; stratify on species'''
+
+    #splits df in to train_validate and test using traing_test_split()
+    train_validate, test = train_test_split(df, test_size=.2, random_state=123, stratify=df.species)
+
+
+    #stratify on species to get an equal number of species
+    train, validate = train_test_split(train_validate, test_size=.3, random_state=123, stratify=train_validate.species)
+
+    return train, validate, test
+
 def prep_iris(df):
     '''
     Takes in the mysql dataframe and returns a clean dataframe
@@ -11,18 +28,18 @@ def prep_iris(df):
     #Drop duplicates
     df.drop_duplicates(inplace=True)
     #drop the columns
-    columns_to_drop = ['species_id']
-    #rename df so it does not interfere with og df
-    sepal_data = df.drop(columns=columns_to_drop) 
-    sepal_data.rename(columns = {'species_name':'species'}, inplace = True)
+    df= df.drop(columns='species_id')
+    df.rename(columns = {'species_name':'species'}, inplace = True)
     #create dummy variables of the species name
-    dummy_df = pd.get_dummies(sepal_data[['species']], dummy_na=False, drop_first=[True])
+    dummy_df = pd.get_dummies(df[['species']], dummy_na=False, drop_first=[True])
     # Concatenate my dummy_df to my data
-    sepal_data1= pd.concat([sepal_data, dummy_df], axis=1)
-    return sepal_data1
+    df= pd.concat([df, dummy_df], axis=1)
 
-    #Need to add train, validate, test
-
+    #split data into train/validate/test using split_data function
+    train, validate, test = split_iris_data(df)
+    
+    return train, validate, test
+    
     #____________________________________________________________________________________
 
 ##Titanic prepped dataset
@@ -41,6 +58,16 @@ def clean_titanic_data(df):
     dummy_df = pd.get_dummies(data[['sex', 'embark_town']], dummy_na=False, drop_first=[True, True])
     data= pd.concat([data, dummy_df], axis=1)
     return data.drop(columns=['sex','embark_town'])
+
+    df = acquire.get_titanic_data()
+    clean_df= clean_titanic_data(df)
+    clean_df
+
+    train, test = train_test_split(clean_df, 
+                               train_size = 0.8, 
+                               stratify = clean_df.survived, 
+                               random_state=1234) #note, stratify is ONLY used on categorical columns
+
 
      #Need to add train, validate, test
 
