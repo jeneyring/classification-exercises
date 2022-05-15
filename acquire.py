@@ -90,3 +90,15 @@ def get_titanic_data():
         df.to_csv('titanic_df.csv')
         
     return df
+
+#______________________________________________________
+#Train dataset data
+'''
+This dataset is named "Train" and reads in a dataset connected to titanic_df (includes
+the names of titanic passengers). Pulled from a csv file
+'''
+def get_train_data():
+    sheet_url = 'https://docs.google.com/spreadsheets/d/1Uhtml8KY19LILuZsrDtlsHHDC9wuDGUSe8LTEwvdI5g/edit#gid=341089357'    
+    csv_export_url = sheet_url.replace('/edit#gid=', '/export?format=csv&gid=')
+    df_train = pd.read_csv(csv_export_url)
+    return df_train
