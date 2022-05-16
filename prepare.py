@@ -57,7 +57,7 @@ def clean_titanic_data(df):
     #Encoding categorical variables
     dummy_df = pd.get_dummies(data[['sex', 'embark_town']], dummy_na=False, drop_first=[True, True])
     data= pd.concat([data, dummy_df], axis=1)
-    return data
+    return data.drop(columns=['sex','embark_town'])
 
     df = acquire.get_titanic_data()
     clean_df= clean_titanic_data(df)
