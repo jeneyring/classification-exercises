@@ -43,6 +43,8 @@ def prep_iris(df):
     #____________________________________________________________________________________
 
 ##Titanic prepped dataset
+import acquire
+titanic = acquire.new_titanic_data()
 def clean_titanic_data(df):
     '''
     Takes in a titanic dataframe and returns a clean dataframe
@@ -59,14 +61,30 @@ def clean_titanic_data(df):
     data= pd.concat([data, dummy_df], axis=1)
     return data.drop(columns=['sex','embark_town'])
 
-    df = acquire.get_titanic_data()
-    clean_df= clean_titanic_data(df)
-    clean_df
+def split_titanic_data(df):
+    train_validate, test = train_test_split(titanic, test_size=.2,
+                                       random_state=123,
+                                       stratify=titanic.survived)
+    train, validate = train_test_split(train_validate, test_size=.3,
+                                  random_state=123,
+                                  stratify=train_validate.survived)
+    return train, validate, test
 
-    train, test = train_test_split(clean_df, 
-                               train_size = 0.8, 
-                               stratify = clean_df.survived, 
-                               random_state=1234) #note, stratify is ONLY used on categorical columns
+
+#creating preparation of dataset for future usage (adding to prepare.py)
+def prepare_titanic_data(df):
+    titanic.drop_duplicates(inplace=True)
+    columns_to_drop = ['passenger_id', 'embarked','class', 'deck']
+    titanic = titanic.drop(columns = columns_to_drop)
+    titanic['embark_town'] = titanic.embark_town.fillna('Southhampton')
+    dummy_titanic=pd.get_dummies(titanic[['pclass','sex','sibsp','parch','embark_town','alone']],
+        dummy_na= False,
+        drop_first=[True, True])
+    titanic = pd.concat([titanic, dummy_titanic], axis=1)
+    
+    train, validate, test = split_titanic_data(titanic)
+    
+    return train, validate, test
 
     #____________________________________________________________________________________
 
