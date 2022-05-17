@@ -102,3 +102,25 @@ def get_train_data():
     csv_export_url = sheet_url.replace('/edit#gid=', '/export?format=csv&gid=')
     df_train = pd.read_csv(csv_export_url)
     return df_train
+
+#_________________________________________________________
+#Codeup Duck data
+'''
+This dataset is for Evaluation exercises and reads the dataset connected to Exercise 3
+'''
+
+def get_duckies_data():
+    if os.path.isfile('c3.csv'):
+        
+        # If csv file exists, read in data from csv file.
+        df = pd.read_csv('c3.csv')
+        
+    else:
+        
+        # Read fresh data from db into a DataFrame.
+        df = get_duckies_data()
+        
+        # Write DataFrame to a csv file.
+        df.to_csv('c3.csv')
+        
+    return df

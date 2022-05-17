@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import acquire
 
 from sklearn.model_selection import train_test_split
 from sklearn.impute import SimpleImputer
@@ -43,8 +44,7 @@ def prep_iris(df):
     #____________________________________________________________________________________
 
 ##Titanic prepped dataset
-import acquire
-titanic = acquire.new_titanic_data()
+
 def clean_titanic_data(df):
     '''
     Takes in a titanic dataframe and returns a clean dataframe
@@ -62,9 +62,9 @@ def clean_titanic_data(df):
     return data.drop(columns=['sex','embark_town'])
 
 def split_titanic_data(df):
-    train_validate, test = train_test_split(titanic, test_size=.2,
+    train_validate, test = train_test_split(df, test_size=.2,
                                        random_state=123,
-                                       stratify=titanic.survived)
+                                       stratify=df.survived)
     train, validate = train_test_split(train_validate, test_size=.3,
                                   random_state=123,
                                   stratify=train_validate.survived)
@@ -73,16 +73,17 @@ def split_titanic_data(df):
 
 #creating preparation of dataset for future usage (adding to prepare.py)
 def prepare_titanic_data(df):
-    titanic.drop_duplicates(inplace=True)
+    df.drop_duplicates(inplace=True)
     columns_to_drop = ['passenger_id', 'embarked','class', 'deck']
-    titanic = titanic.drop(columns = columns_to_drop)
-    titanic['embark_town'] = titanic.embark_town.fillna('Southhampton')
-    dummy_titanic=pd.get_dummies(titanic[['pclass','sex','sibsp','parch','embark_town','alone']],
+    df = df.drop(columns = columns_to_drop)
+    df['embark_town'] = df.embark_town.fillna('Southhampton')
+    df['age'] = df.age.fillna(df.age.mean())
+    dummy_titanic=pd.get_dummies(df[['pclass','sex','sibsp','parch','embark_town','alone']],
         dummy_na= False,
         drop_first=[True, True])
-    titanic = pd.concat([titanic, dummy_titanic], axis=1)
+    df = pd.concat([df, dummy_titanic], axis=1)
     
-    train, validate, test = split_titanic_data(titanic)
+    train, validate, test = split_titanic_data(df)
     
     return train, validate, test
 
