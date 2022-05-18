@@ -89,7 +89,7 @@ def prepare_titanic_data(df):
 
     #____________________________________________________________________________________
 
-##Telco prepped dataset
+##Telco cleaned dataset (step one)
 def clean_telco_data(df):
     '''
     Takes in the Telco dataset and cleans & prepares for test, validation and training purposes for exploration on the data of past churned customers.
@@ -103,3 +103,26 @@ def clean_telco_data(df):
     #concat to original
     df_telco = pd.concat([df, dummy_df], axis=1)
     return df_telco
+
+#telco split data (step two)
+def split_telco_data(df):
+    train_validate, test = train_test_split(df, test_size=.2,
+                                       random_state=123,
+                                       stratify=df.churn)
+    train, validate = train_test_split(train_validate, test_size=.3,
+                                  random_state=123,
+                                  stratify=train_validate.churn)
+    return train, validate, test
+
+#Telco fully cleaned and prep data (final step/ready for charts)
+def prepare_telco_data(df):
+    df.drop_duplicates(inplace=True)
+    df["contract_type"].replace({0: "month_to_month", 1: "one_year", 2: "two_years"}, inplace=True)
+    dummy_df = pd.get_dummies(df[['gender', 'dependents', 'partner', 'contract_type', 'payment_type']], 
+        dummy_na=False, drop_first=[True, True, True, True])
+    df = pd.concat([df, dummy_df], axis=1)
+    
+    train, validate, test = split_telco_data(df)
+    
+    return train, validate, test
+#when adding to models, make sure to encode string columns
